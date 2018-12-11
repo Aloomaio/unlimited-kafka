@@ -29,6 +29,16 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
         this(region,bucket,byteSizeThreshold, serializer, DefaultCredentialsProvider.create());
     }
 
+    public MessagePackerS3(S3Client s3Client,
+                           String bucket,
+                           long byteSizeThreshold,
+                           Serializer<T> serializer) {
+        this.s3 = s3Client;
+        this.bucket = bucket;
+        this.serializer = serializer;
+        this.byteSizeThreshold = byteSizeThreshold;
+    }
+
     public Capsule<T> packMessage(T message, String topic, Long offset) {
 
         String key = String.format("%s/%d", topic, offset);

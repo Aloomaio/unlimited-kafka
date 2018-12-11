@@ -31,6 +31,13 @@ public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
         this(region, bucket, factory, DefaultCredentialsProvider.create());
     }
 
+    public MessageUnpackerS3(S3Client s3,
+                             String bucket,
+                             SerializeableFactory<T> factory) {
+        this.s3 = s3;
+        this.bucket = bucket;
+        this.factory = factory;
+    }
 
     @Override
     public T unpackMessage(Capsule<T> capsule) {
@@ -47,7 +54,7 @@ public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
 
     private T unpack(String key) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(key).build();
-        ResponseBytes<GetObjectResponse> objectAsBytes = s3.getObjectAsBytes(getObjectRequest);
-        return factory.fromBytes(objectAsBytes.asByteArray());
+        byte[] objectAsBytes = s3.getObjectAsBytes(getObjectRequest).asByteArray();
+        return factory.fromBytes(objectAsBytes);
     }
 }
