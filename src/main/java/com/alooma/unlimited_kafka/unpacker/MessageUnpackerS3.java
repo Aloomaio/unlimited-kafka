@@ -1,8 +1,6 @@
 package com.alooma.unlimited_kafka.unpacker;
 
 import com.alooma.unlimited_kafka.Capsule;
-import com.alooma.unlimited_kafka.LocalCapsule;
-import com.alooma.unlimited_kafka.RemoteCapsule;
 import com.alooma.unlimited_kafka.SerializeableFactory;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -33,15 +31,22 @@ public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
         this(region, bucket, factory, DefaultCredentialsProvider.create());
     }
 
+    public MessageUnpackerS3(S3Client s3,
+                             String bucket,
+                             SerializeableFactory<T> factory) {
+        this.s3 = s3;
+        this.bucket = bucket;
+        this.factory = factory;
+    }
 
     @Override
     public T unpackMessage(Capsule<T> capsule) {
 
-        if (capsule instanceof RemoteCapsule) {
-            String key = ((RemoteCapsule<T>) capsule).getKey();
+        if (capsule.getType() == Capsule.Type.REMOTE) {
+            String key = capsule.getKey();
             return unpack(key);
-        } else if (capsule instanceof LocalCapsule) {
-            return ((LocalCapsule<T>) capsule).getData();
+        } else if (capsule.getType() == Capsule.Type.LOCAL) {
+            return capsule.getData();
         } else {
             throw new NotImplementedException();
         }
@@ -49,7 +54,7 @@ public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
 
     private T unpack(String key) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(key).build();
-        ResponseBytes<GetObjectResponse> objectAsBytes = s3.getObjectAsBytes(getObjectRequest);
-        return factory.fromBytes(objectAsBytes.asByteArray());
+        byte[] objectAsBytes = s3.getObjectAsBytes(getObjectRequest).asByteArray();
+        return factory.fromBytes(objectAsBytes);
     }
 }
