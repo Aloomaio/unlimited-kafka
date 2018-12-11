@@ -1,8 +1,6 @@
 package com.alooma.unlimited_kafka.unpacker;
 
 import com.alooma.unlimited_kafka.Capsule;
-import com.alooma.unlimited_kafka.LocalCapsule;
-import com.alooma.unlimited_kafka.RemoteCapsule;
 import com.alooma.unlimited_kafka.SerializeableFactory;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -37,11 +35,11 @@ public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
     @Override
     public T unpackMessage(Capsule<T> capsule) {
 
-        if (capsule instanceof RemoteCapsule) {
-            String key = ((RemoteCapsule<T>) capsule).getKey();
+        if (capsule.getType() == Capsule.Type.REMOTE) {
+            String key = capsule.getKey();
             return unpack(key);
-        } else if (capsule instanceof LocalCapsule) {
-            return ((LocalCapsule<T>) capsule).getData();
+        } else if (capsule.getType() == Capsule.Type.LOCAL) {
+            return capsule.getData();
         } else {
             throw new NotImplementedException();
         }

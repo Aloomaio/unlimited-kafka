@@ -1,8 +1,6 @@
 package com.alooma.unlimited_kafka.packer;
 
 import com.alooma.unlimited_kafka.Capsule;
-import com.alooma.unlimited_kafka.LocalCapsule;
-import com.alooma.unlimited_kafka.RemoteCapsule;
 import com.alooma.unlimited_kafka.Serializer;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -43,9 +41,9 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
                             .build(),
                     RequestBody.fromBytes(serializedBytes));
 
-            return new RemoteCapsule<>(key);
+            return Capsule.remoteCapsule(key);
         } else {
-            return new LocalCapsule<>(message);
+            return Capsule.localCapsule(message);
         }
     }
 }
