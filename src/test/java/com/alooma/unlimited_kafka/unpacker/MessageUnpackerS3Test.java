@@ -2,11 +2,9 @@ package com.alooma.unlimited_kafka.unpacker;
 
 import com.alooma.unlimited_kafka.Capsule;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.MockSettings;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -24,7 +22,7 @@ class MessageUnpackerS3Test {
         assertEquals(
                 unpacker.unpackMessage(Capsule.localCapsule(mockData)),
                 mockData
-                );
+        );
 
     }
 
