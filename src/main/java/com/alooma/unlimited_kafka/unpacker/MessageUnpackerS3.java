@@ -4,11 +4,9 @@ import com.alooma.unlimited_kafka.Capsule;
 import com.alooma.unlimited_kafka.SerializeableFactory;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
@@ -19,15 +17,15 @@ public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
 
 
     public MessageUnpackerS3(Region region, String bucket,
-                      SerializeableFactory<T> factory,
-                      AwsCredentialsProvider provider) {
+                             SerializeableFactory<T> factory,
+                             AwsCredentialsProvider provider) {
         this.s3 = S3Client.builder().credentialsProvider(provider).region(region).build();
         this.bucket = bucket;
         this.factory = factory;
     }
 
     public MessageUnpackerS3(Region region, String bucket,
-                      SerializeableFactory<T> factory) {
+                             SerializeableFactory<T> factory) {
         this(region, bucket, factory, DefaultCredentialsProvider.create());
     }
 
