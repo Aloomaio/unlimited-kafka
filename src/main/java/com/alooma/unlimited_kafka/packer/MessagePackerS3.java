@@ -17,16 +17,16 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
     private long byteSizeThreshold;
 
     public MessagePackerS3(Region region, String bucket, long byteSizeThreshold,
-                    Serializer<T> serializer,
-                    AwsCredentialsProvider provider) {
+                           Serializer<T> serializer,
+                           AwsCredentialsProvider provider) {
         this.s3 = S3Client.builder().credentialsProvider(provider).region(region).build();
         this.bucket = bucket;
         this.byteSizeThreshold = byteSizeThreshold;
         this.serializer = serializer;
     }
 
-    public MessagePackerS3(Region region, String bucket, long byteSizeThreshold,Serializer<T> serializer) {
-        this(region,bucket,byteSizeThreshold, serializer, DefaultCredentialsProvider.create());
+    public MessagePackerS3(Region region, String bucket, long byteSizeThreshold, Serializer<T> serializer) {
+        this(region, bucket, byteSizeThreshold, serializer, DefaultCredentialsProvider.create());
     }
 
     public MessagePackerS3(S3Client s3Client,
