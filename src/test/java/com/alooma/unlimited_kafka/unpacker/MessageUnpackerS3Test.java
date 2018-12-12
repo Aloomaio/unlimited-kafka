@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 class MessageUnpackerS3Test {
 
     @Test
-    void unpackMessageLocal() {
+    public void unpackMessageLocal() {
         S3Client s3 = mock(S3Client.class);
 
         MessageUnpackerS3<String> unpacker = new MessageUnpackerS3<>(s3, "bucket", String::new);
@@ -29,7 +29,7 @@ class MessageUnpackerS3Test {
     }
 
     @Test
-    void unpackMessageRemote() {
+    public void unpackMessageRemote() {
         S3Client s3 = mock(S3Client.class, RETURNS_DEEP_STUBS);
 
         MessageUnpackerS3<String> unpacker = new MessageUnpackerS3<>(s3, "bucket", String::new);

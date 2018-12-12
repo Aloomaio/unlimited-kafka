@@ -11,7 +11,7 @@ import static org.mockito.Mockito.mock;
 class MessagePackerS3Test {
 
     @Test
-    void testPackLocal() {
+    public void testPackLocal() {
         S3Client s3 = mock(S3Client.class);
 
         MessagePackerS3<String> packer = new MessagePackerS3<>(s3, "maor-test-retention", 1000, String::getBytes);
@@ -24,7 +24,7 @@ class MessagePackerS3Test {
     }
 
     @Test
-    void testPackRemote() {
+    public void testPackRemote() {
         S3Client s3 = mock(S3Client.class);
 
         MessagePackerS3<String> packer = new MessagePackerS3<>(s3, "maor-test-retention", 1, String::getBytes);
