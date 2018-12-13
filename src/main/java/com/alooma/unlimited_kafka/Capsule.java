@@ -1,6 +1,8 @@
 package com.alooma.unlimited_kafka;
 
 
+import java.util.Objects;
+
 public class Capsule<T> {
 
     private final Type type;
@@ -45,6 +47,21 @@ public class Capsule<T> {
                 ", key='" + key + '\'' +
                 ", data=" + data +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Capsule<?> capsule = (Capsule<?>) o;
+        return type == capsule.type &&
+                Objects.equals(key, capsule.key) &&
+                Objects.equals(data, capsule.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, key, data);
     }
 }
 
