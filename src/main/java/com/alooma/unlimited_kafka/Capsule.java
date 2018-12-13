@@ -52,7 +52,7 @@ public class Capsule<T> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Capsule)) return false;
         Capsule<?> capsule = (Capsule<?>) o;
         return type == capsule.type &&
                 Objects.equals(key, capsule.key) &&
