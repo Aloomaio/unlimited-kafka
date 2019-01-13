@@ -14,6 +14,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class S3IntegrationTest {
@@ -41,17 +43,27 @@ public class S3IntegrationTest {
 
 
     @Test
-    void testS3MultipartUpload() throws InterruptedException {
+    void testS3MultipartUpload() throws InterruptedException, IOException {
 
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
-        assertEquals("test1/12", capsule.getKey());
+        assertEquals("test1/12.gz", capsule.getKey());
     }
 
     @Test
-    void testS3MultipartUpload_withS3Params() throws InterruptedException {
+    void testS3UploadFileType() throws InterruptedException, IOException {
+
+        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
+
+        assertEquals(capsule.getType(), Capsule.Type.REMOTE);
+        assertEquals("test1/12.gz", capsule.getKey());
+    }
+
+    @Test
+    void testS3MultipartUpload_withS3Params() throws InterruptedException, IOException {
 
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
                 .addMultipartUploadThreshold(6000000L)
@@ -63,11 +75,11 @@ public class S3IntegrationTest {
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
-        assertEquals("test1/12", capsule.getKey());
+        assertEquals("test1/12.gz", capsule.getKey());
     }
 
     @Test
-    void testS3SingleUpload() throws InterruptedException {
+    void testS3SingleUpload() throws InterruptedException, IOException {
 
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 6000000L, String::getBytes, new S3ManagerParams());
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);

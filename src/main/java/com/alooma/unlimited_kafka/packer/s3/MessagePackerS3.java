@@ -13,6 +13,9 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.GZIPOutputStream;
 
 public class MessagePackerS3<T> implements MessagePacker<T> {
 
@@ -45,10 +48,10 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
         this.s3ManagerParams = s3ManagerParams;
     }
 
-    public Capsule<T> packMessage(T message, String topic, Long offset) throws InterruptedException {
+    public Capsule<T> packMessage(T message, String topic, Long offset) throws InterruptedException, IOException {
 
         byte[] serializedBytes = serializer.serialize(message);
-        String key = String.format("%s/%d", topic, offset);
+        String key = String.format("%s/%d", topic, offset).concat(".gz");
         if (serializedBytes.length > byteSizeThreshold) {
             try {
                 Upload upload = upload(serializedBytes, key);
@@ -65,11 +68,20 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
         return Capsule.localCapsule(message);
     }
 
-    private Upload upload(byte[] serializedBytes, String key) {
+    private Upload upload(byte[] serializedBytes, String key) throws IOException {
         transferManager = new TransferManagerAdvancedFactory().create(s3Client, s3ManagerParams);
+        byte[] zippedBytes = getGzBytes(serializedBytes);
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(serializedBytes.length);
-        return transferManager.upload(bucket, key, new ByteArrayInputStream(serializedBytes), metadata);
+        metadata.setContentLength(zippedBytes.length);
+        return transferManager.upload(bucket, key, new ByteArrayInputStream(zippedBytes), metadata);
+    }
+
+    private byte[] getGzBytes(byte[] serializedBytes) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream);
+        gzipOutputStream.write(serializedBytes);
+        gzipOutputStream.close();
+        return byteArrayOutputStream.toByteArray();
     }
 }
 
