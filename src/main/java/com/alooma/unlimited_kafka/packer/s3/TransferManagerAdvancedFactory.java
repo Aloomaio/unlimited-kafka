@@ -8,7 +8,6 @@ import java.util.concurrent.Executors;
 
 public class TransferManagerAdvancedFactory {
 
-
     public TransferManager create(AmazonS3 amazonS3, S3ManagerParams s3ManagerParams) {
 
         TransferManagerBuilder builder = TransferManagerBuilder.standard().withS3Client(amazonS3);
@@ -19,7 +18,5 @@ public class TransferManagerAdvancedFactory {
                 .ifPresent(poolSize -> builder.withExecutorFactory(() -> Executors.newFixedThreadPool(poolSize)));
 
         return builder.build();
-
     }
-
 }

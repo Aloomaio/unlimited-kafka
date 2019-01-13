@@ -41,7 +41,7 @@ public class S3IntegrationTest {
 
 
     @Test
-    void testS3MultipartUpload() throws InterruptedException {
+    void testS3MultipartUpload() {
 
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
@@ -51,7 +51,7 @@ public class S3IntegrationTest {
     }
 
     @Test
-    void testS3MultipartUpload_withS3Params() throws InterruptedException {
+    void testS3MultipartUpload_withS3Params() {
 
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
                 .addMultipartUploadThreshold(6000000L)
@@ -67,7 +67,7 @@ public class S3IntegrationTest {
     }
 
     @Test
-    void testS3SingleUpload() throws InterruptedException {
+    void testS3SingleUpload() {
 
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 6000000L, String::getBytes, new S3ManagerParams());
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
