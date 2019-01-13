@@ -48,13 +48,13 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
         this.s3ManagerParams = s3ManagerParams;
     }
 
-    public Capsule<T> packMessage(T message, String topic, Long offset) throws InterruptedException, IOException {
+    public Capsule<T> packMessage(T message, String topic, Long offset, boolean shouldUploadAsGz) throws InterruptedException, IOException {
 
         byte[] serializedBytes = serializer.serialize(message);
         String key = String.format("%s/%d", topic, offset).concat(".gz");
         if (serializedBytes.length > byteSizeThreshold) {
             try {
-                Upload upload = upload(serializedBytes, key);
+                Upload upload = upload(serializedBytes, key, shouldUploadAsGz);
                 upload.waitForCompletion();
                 if (upload.isDone()) {
                     System.out.println("Object upload complete");
@@ -68,12 +68,12 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
         return Capsule.localCapsule(message);
     }
 
-    private Upload upload(byte[] serializedBytes, String key) throws IOException {
+    private Upload upload(byte[] serializedBytes, String key, boolean shouldUploadAsGz) throws IOException {
         transferManager = new TransferManagerAdvancedFactory().create(s3Client, s3ManagerParams);
-        byte[] zippedBytes = getGzBytes(serializedBytes);
+        byte[] inputBytes = shouldUploadAsGz ? getGzBytes(serializedBytes) : serializedBytes;
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(zippedBytes.length);
-        return transferManager.upload(bucket, key, new ByteArrayInputStream(zippedBytes), metadata);
+        metadata.setContentLength(inputBytes.length);
+        return transferManager.upload(bucket, key, new ByteArrayInputStream(inputBytes), metadata);
     }
 
     private byte[] getGzBytes(byte[] serializedBytes) throws IOException {

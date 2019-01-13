@@ -23,7 +23,7 @@ class MessagePackerS3Test {
 
         MessagePackerS3<String> packer = new MessagePackerS3<>(s3, "maor-test-retention", 1000, String::getBytes, s3ManagerParams);
 
-        Capsule<String> capsule = packer.packMessage("message", "topic", 123L);
+        Capsule<String> capsule = packer.packMessage("message", "topic", 123L, false);
 
         assertEquals(capsule.getType(), Capsule.Type.LOCAL);
         assertNull(capsule.getKey());
@@ -35,6 +35,6 @@ class MessagePackerS3Test {
     void testConstructor() throws InterruptedException, IOException {
         MessagePackerS3<String> packerS3 = new MessagePackerS3<>(Regions.EU_WEST_1, "bucket", 100000L, String::getBytes);
 
-        assertEquals(Capsule.localCapsule("fakemessage"), packerS3.packMessage("fakemessage", "topic", 123L));
+        assertEquals(Capsule.localCapsule("fakemessage"), packerS3.packMessage("fakemessage", "topic", 123L, false));
     }
 }
