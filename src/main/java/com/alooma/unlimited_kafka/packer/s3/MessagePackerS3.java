@@ -15,6 +15,8 @@ import com.amazonaws.services.s3.transfer.Upload;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.zip.GZIPOutputStream;
 
 public class MessagePackerS3<T> implements MessagePacker<T> {
@@ -51,6 +53,14 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
     public Capsule<T> packMessage(T message, String topic, Long offset) throws InterruptedException, IOException {
 
         byte[] serializedBytes = serializer.serialize(message);
+
+
+        StringBuilder stringBuilder = new StringBuilder();
+        s3ManagerParams.getOptionalDirectoryNamePrefix().ifPresent(prefix -> stringBuilder.append(prefix).append("/"));
+
+        //s3ManagerParams.getOptionalDateTimeFormatter().orElse(DateTimeFormatter.ofPattern("yyyy'/'MM'/'dd'/'HH"))
+
+
         String key = String.format("%s/%d", topic, offset).concat(".gz");
         if (serializedBytes.length > byteSizeThreshold) {
             try {

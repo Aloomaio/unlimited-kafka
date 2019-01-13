@@ -2,6 +2,7 @@ package com.alooma.unlimited_kafka.packer.s3;
 
 import com.alooma.unlimited_kafka.packer.StorageManagerParams;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class S3ManagerParams implements StorageManagerParams {
@@ -9,6 +10,8 @@ public class S3ManagerParams implements StorageManagerParams {
     private Long multipartUploadThreshold;
     private Long minimumUploadPartSize;
     private Integer threadPoolSize;
+    private String directoryNamePrefix;
+    private DateTimeFormatter dateTimeFormatter;
 
     public void setMultipartUploadThreshold(long multipartUploadThreshold) {
         this.multipartUploadThreshold = multipartUploadThreshold;
@@ -36,4 +39,23 @@ public class S3ManagerParams implements StorageManagerParams {
         return Optional.ofNullable(minimumUploadPartSize);
     }
 
+    public Optional<String> getOptionalDirectoryNamePrefix() {
+        return Optional.ofNullable(directoryNamePrefix);
+    }
+
+    public void setDirectoryNamePrefix(String directoryNamePrefix) {
+        this.directoryNamePrefix = directoryNamePrefix;
+    }
+
+    public Optional<DateTimeFormatter> getOptionalDateTimeFormatter() {
+        return Optional.ofNullable(dateTimeFormatter);
+    }
+
+    public void setDateTimeFormatter(DateTimeFormatter dateTimeFormatter) {
+        this.dateTimeFormatter = dateTimeFormatter;
+    }
+
+    public DateTimeFormatter getDateTimeFormatter() {
+        return dateTimeFormatter;
+    }
 }

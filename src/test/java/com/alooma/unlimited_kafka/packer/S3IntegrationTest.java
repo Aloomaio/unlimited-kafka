@@ -66,9 +66,9 @@ public class S3IntegrationTest {
     void testS3MultipartUpload_withS3Params() throws InterruptedException, IOException {
 
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
-                .addMultipartUploadThreshold(6000000L)
-                .addMinimumUploadPartSize(10000L)
-                .addThreadPoolSize(1)
+                .withMultipartUploadThreshold(6000000L)
+                .withMinimumUploadPartSize(10000L)
+                .withThreadPoolSize(1)
                 .build();
 
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, s3ManagerParams);
