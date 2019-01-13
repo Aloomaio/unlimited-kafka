@@ -53,13 +53,23 @@ public class S3IntegrationTest {
     }
 
     @Test
-    void testS3UploadFileType() throws InterruptedException, IOException {
+    void testS3UploadFileAsGz() throws InterruptedException, IOException {
+
+        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, true);
+
+        assertEquals(capsule.getType(), Capsule.Type.REMOTE);
+        assertEquals("test1/12.gz", capsule.getKey());
+    }
+
+    @Test
+    void testS3UploadFileNotAsGz() throws InterruptedException, IOException {
 
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, false);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
-        assertEquals("test1/12.gz", capsule.getKey());
+        assertEquals("test1/12", capsule.getKey());
     }
 
     @Test
@@ -72,7 +82,7 @@ public class S3IntegrationTest {
                 .build();
 
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, s3ManagerParams);
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, false);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, true);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
         assertEquals("test1/12.gz", capsule.getKey());
@@ -82,7 +92,7 @@ public class S3IntegrationTest {
     void testS3SingleUpload() throws InterruptedException, IOException {
 
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 6000000L, String::getBytes, new S3ManagerParams());
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, false);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, true);
 
         assertEquals(capsule.getType(), Capsule.Type.LOCAL);
         assertEquals("testMultipartUpload", capsule.getData());
