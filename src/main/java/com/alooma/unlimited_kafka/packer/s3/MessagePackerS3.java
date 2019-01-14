@@ -73,7 +73,6 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
             } finally {
                 transferManager.shutdownNow(false);
             }
-
             return Capsule.remoteCapsule(key);
         }
         return Capsule.localCapsule(message);

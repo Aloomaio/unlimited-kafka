@@ -29,15 +29,12 @@ class MessageUnpackerS3Test {
                 unpacker.unpackMessage(Capsule.localCapsule(mockData)),
                 mockData
         );
-
     }
 
     @Test
     void unpackMessageRemote() {
         AmazonS3 s3 = mock(AmazonS3.class, RETURNS_DEEP_STUBS);
         S3Object s3Object = mock(S3Object.class);
-        S3ObjectInputStream s3ObjectInputStream = mock(S3ObjectInputStream.class) ;
-
         MessageUnpackerS3<String> unpacker = new MessageUnpackerS3<>(s3, "bucket", String::new);
 
         String mockData = "local capsule data";
@@ -59,5 +56,4 @@ class MessageUnpackerS3Test {
         assertEquals("fakedata", unpackerS3.unpackMessage(Capsule.localCapsule("fakedata")));
 
     }
-
 }
