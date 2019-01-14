@@ -23,7 +23,7 @@ class S3KeyGeneratorTest {
                 .build();
         S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
-        String generatedKey = keyGenerator.genrate(topic);
+        String generatedKey = keyGenerator.generate(topic);
 
         assertTrue(pattern.matcher(generatedKey).matches());
 
@@ -38,7 +38,7 @@ class S3KeyGeneratorTest {
                 .build();
         S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
-        String generatedKey = keyGenerator.genrate(topic);
+        String generatedKey = keyGenerator.generate(topic);
 
         assertTrue(defaultPattern.matcher(generatedKey).matches());
 
@@ -52,7 +52,7 @@ class S3KeyGeneratorTest {
                 .build();
         S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
-        String generatedKey = keyGenerator.genrate(topic);
+        String generatedKey = keyGenerator.generate(topic);
 
         assertTrue(defaultPattern.matcher(generatedKey).matches());
 

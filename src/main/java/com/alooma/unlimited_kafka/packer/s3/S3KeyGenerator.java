@@ -14,7 +14,7 @@ public class S3KeyGenerator {
     }
 
 
-    public String genrate(String topic){
+    public String generate(String topic){
         StringBuilder stringBuilder = new StringBuilder();
         s3ManagerParams.getOptionalDirectoryNamePrefix().ifPresent(prefix -> stringBuilder.append(prefix).append("/"));
         DateTimeFormatter dateTimeFormatter = s3ManagerParams.getOptionalDateTimeFormatter().orElse(defaultDateFormatter);
