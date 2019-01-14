@@ -27,13 +27,11 @@ public class S3ManagerParams implements StorageManagerParams {
 
     public Optional<Integer> getOptionalOfThreadPoolSize(){
         return Optional.ofNullable(threadPoolSize);
-
     }
 
     public Optional<Long> getOptionalOfMultipartUploadThreshold() {
         return Optional.ofNullable(multipartUploadThreshold);
     }
-
 
     public Optional<Long> getOptionalOfMinimumUploadPartSize() {
         return Optional.ofNullable(minimumUploadPartSize);

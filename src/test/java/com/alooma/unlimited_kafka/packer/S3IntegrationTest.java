@@ -14,12 +14,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class S3IntegrationTest {
-
 
     private static final String bucket = "testbucket";
     private static AmazonS3 client;
@@ -43,28 +40,34 @@ public class S3IntegrationTest {
 
 
     @Test
-    void testS3MultipartUpload() throws InterruptedException, IOException {
-
+    void testS3MultipartUpload() {
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L,true);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
         assertEquals("test1/12.gz", capsule.getKey());
     }
 
     @Test
-    void testS3UploadFileType() throws InterruptedException, IOException {
-
+    void testS3UploadFileAsGz() {
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, true);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
         assertEquals("test1/12.gz", capsule.getKey());
     }
 
     @Test
-    void testS3MultipartUpload_withS3Params() throws InterruptedException, IOException {
+    void testS3UploadFileNotAsGz() {
+        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, false);
 
+        assertEquals(capsule.getType(), Capsule.Type.REMOTE);
+        assertEquals("test1/12", capsule.getKey());
+    }
+
+    @Test
+    void testS3MultipartUpload_withS3Params() {
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
                 .withMultipartUploadThreshold(6000000L)
                 .withMinimumUploadPartSize(10000L)
@@ -72,17 +75,16 @@ public class S3IntegrationTest {
                 .build();
 
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, s3ManagerParams);
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, true);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
         assertEquals("test1/12.gz", capsule.getKey());
     }
 
     @Test
-    void testS3SingleUpload() throws InterruptedException, IOException {
-
+    void testS3SingleUpload(){
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 6000000L, String::getBytes, new S3ManagerParams());
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, true);
 
         assertEquals(capsule.getType(), Capsule.Type.LOCAL);
         assertEquals("testMultipartUpload", capsule.getData());
