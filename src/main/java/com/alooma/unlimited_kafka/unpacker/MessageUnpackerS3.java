@@ -2,34 +2,40 @@ package com.alooma.unlimited_kafka.unpacker;
 
 import com.alooma.unlimited_kafka.Capsule;
 import com.alooma.unlimited_kafka.SerializeableFactory;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.AnonymousAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.io.IOException;
 
 public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
 
-    private S3Client s3;
+    private AmazonS3 s3;
     private String bucket;
     private SerializeableFactory<T> factory;
 
 
-    public MessageUnpackerS3(Region region, String bucket,
+    public MessageUnpackerS3(Regions region, String bucket,
                              SerializeableFactory<T> factory,
-                             AwsCredentialsProvider provider) {
-        this.s3 = S3Client.builder().credentialsProvider(provider).region(region).build();
+                             AWSCredentialsProvider provider) {
+        this.s3 = AmazonS3ClientBuilder.standard().withRegion(region).withCredentials(provider).build();
         this.bucket = bucket;
         this.factory = factory;
     }
 
-    public MessageUnpackerS3(Region region, String bucket,
+    public MessageUnpackerS3(Regions region, String bucket,
                              SerializeableFactory<T> factory) {
-        this(region, bucket, factory, DefaultCredentialsProvider.create());
+        this(region, bucket, factory, new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()));
     }
 
-    public MessageUnpackerS3(S3Client s3,
+    public MessageUnpackerS3(AmazonS3 s3,
                              String bucket,
                              SerializeableFactory<T> factory) {
         this.s3 = s3;
@@ -51,8 +57,14 @@ public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
     }
 
     private T unpack(String key) {
-        GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(key).build();
-        byte[] objectAsBytes = s3.getObjectAsBytes(getObjectRequest).asByteArray();
+        GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
+        S3ObjectInputStream objectContent = s3.getObject(getObjectRequest).getObjectContent();
+        byte[] objectAsBytes;
+        try {
+            objectAsBytes = IOUtils.toByteArray(objectContent);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return factory.fromBytes(objectAsBytes);
     }
 }

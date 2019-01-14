@@ -7,8 +7,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
@@ -17,7 +15,7 @@ import static org.mockito.Mockito.mock;
 class MessagePackerS3Test {
 
     @Test
-    void testPackLocal() throws InterruptedException, IOException {
+    void testPackLocal() {
         AmazonS3 s3 = mock(AmazonS3.class);
         S3ManagerParams s3ManagerParams = mock(S3ManagerParams.class);
 
@@ -30,9 +28,8 @@ class MessagePackerS3Test {
         assertEquals(capsule.getData(), "message");
     }
 
-
     @Test
-    void testConstructor() throws InterruptedException, IOException {
+    void testConstructor() {
         MessagePackerS3<String> packerS3 = new MessagePackerS3<>(Regions.EU_WEST_1, "bucket", 100000L, String::getBytes);
 
         assertEquals(Capsule.localCapsule("fakemessage"), packerS3.packMessage("fakemessage", "topic", 123L, false));
