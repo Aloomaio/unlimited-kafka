@@ -2,6 +2,7 @@ package com.alooma.unlimited_kafka.packer.s3;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 public class S3KeyGenerator {
 
@@ -16,10 +17,9 @@ public class S3KeyGenerator {
     public String genrate(String topic){
         StringBuilder stringBuilder = new StringBuilder();
         s3ManagerParams.getOptionalDirectoryNamePrefix().ifPresent(prefix -> stringBuilder.append(prefix).append("/"));
+        DateTimeFormatter dateTimeFormatter = s3ManagerParams.getOptionalDateTimeFormatter().orElse(defaultDateFormatter);
 
-        DateTimeFormatter dateTimeFormatter = s3ManagerParams.getOptionalDateTimeFormatter().ifPresent();
-
-        //todo: check if date should be now or in time zone accoeding to region
+        //todo: check if date should be now or in time zone according to region
 
         LocalDateTime localDateTime = LocalDateTime.now();
         try {
@@ -29,16 +29,12 @@ public class S3KeyGenerator {
             stringBuilder.append(localDateTime.format(defaultDateFormatter)).append("/");
         }
 
+        UUID uuid = UUID.randomUUID();
+        stringBuilder.append(topic).append("/").append(uuid.toString());
 
+        //todo: add .gz when needed
 
-
-
-        //String key = String.format("%s/%d", topic, offset).concat(".gz");
 
         return stringBuilder.toString();
     }
-
-
-
-
 }
