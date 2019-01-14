@@ -60,7 +60,7 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
     public Capsule<T> packMessage(T message, String topic, Long offset, boolean shouldUploadAsGz) {
 
         byte[] serializedBytes = serializer.serialize(message);
-        String key = createKey(topic, offset, shouldUploadAsGz);
+        String key = new S3KeyGenerator(s3ManagerParams).generate(topic, shouldUploadAsGz);
         if (serializedBytes.length > byteSizeThreshold) {
             try {
                 Upload upload = upload(serializedBytes, key, shouldUploadAsGz);
@@ -76,14 +76,6 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
             return Capsule.remoteCapsule(key);
         }
         return Capsule.localCapsule(message);
-    }
-
-    private String createKey(String topic, Long offset, boolean shouldUploadAsGz) {
-        String key = String.format("%s/%d", topic, offset);
-        if (shouldUploadAsGz){
-            return key.concat(".gz");
-        }
-        return key;
     }
 
     private Upload upload(byte[] serializedBytes, String key, boolean shouldUploadAsGz) throws IOException {

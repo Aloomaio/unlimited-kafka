@@ -12,29 +12,32 @@ public class S3KeyGenerator {
     public S3KeyGenerator(S3ManagerParams s3ManagerParams) {
         this.s3ManagerParams = s3ManagerParams;
     }
-
-
-    public String generate(String topic){
+    //todo: check if date should be now or in time zone according to region
+    public String generate(String topic, boolean shouldUploadAsGz){
         StringBuilder stringBuilder = new StringBuilder();
-        s3ManagerParams.getOptionalDirectoryNamePrefix().ifPresent(prefix -> stringBuilder.append(prefix).append("/"));
         DateTimeFormatter dateTimeFormatter = s3ManagerParams.getOptionalDateTimeFormatter().orElse(defaultDateFormatter);
 
-        //todo: check if date should be now or in time zone according to region
+        s3ManagerParams.getOptionalDirectoryNamePrefix().ifPresent(prefix -> stringBuilder.append(prefix).append("/"));
+        addDate(stringBuilder, dateTimeFormatter);
+        stringBuilder.append(topic).append("/").append(UUID.randomUUID().toString());
+        addSuffix(shouldUploadAsGz, stringBuilder);
 
+        return stringBuilder.toString();
+    }
+
+    private void addDate(StringBuilder stringBuilder, DateTimeFormatter dateTimeFormatter) {
         LocalDateTime localDateTime = LocalDateTime.now();
         try {
             String format = localDateTime.format(dateTimeFormatter);
             stringBuilder.append(format.replaceAll("[^0-9a-zA-Z]", "/")).append("/");
-        }catch (Exception e){
+        } catch (Exception e){
             stringBuilder.append(localDateTime.format(defaultDateFormatter)).append("/");
         }
+    }
 
-        UUID uuid = UUID.randomUUID();
-        stringBuilder.append(topic).append("/").append(uuid.toString());
-
-        //todo: add .gz when needed
-
-
-        return stringBuilder.toString();
+    private void addSuffix(boolean shouldUploadAsGz, StringBuilder stringBuilder) {
+        if (shouldUploadAsGz){
+            stringBuilder.append(".gz");
+        }
     }
 }

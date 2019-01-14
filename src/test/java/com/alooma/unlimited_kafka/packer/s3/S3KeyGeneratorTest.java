@@ -9,13 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class S3KeyGeneratorTest {
 
-
     private final Pattern defaultPattern = Pattern.compile(".*\\d{4}/\\d{2}/\\d{2}/\\d{2}/.*/[a-z0-9\\-]{36}");
+    private final Pattern defaultPatternWithSuffix = Pattern.compile(".*\\d{4}/\\d{2}/\\d{2}/\\d{2}/.*/[a-z0-9\\-]{36}\\.gz");
     private final Pattern pattern = Pattern.compile(".*\\d{2}/\\w{3}/\\d{2}/\\d{2}/.*/[a-z0-9\\-]{36}");
 
     @Test
     void testKeyGenerator() {
-
         String topic = "test-topic";
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
                 .withDirectoryNamePrefix("noa")
@@ -23,42 +22,48 @@ class S3KeyGeneratorTest {
                 .build();
         S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
-        String generatedKey = keyGenerator.generate(topic);
+        String generatedKey = keyGenerator.generate(topic, false);
 
         assertTrue(pattern.matcher(generatedKey).matches());
-
     }
 
     @Test
     void testKeyGenerator_defaultDateTimeFormat() {
-
         String topic = "test-topic";
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
                 .withDirectoryNamePrefix("noa")
                 .build();
         S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
-        String generatedKey = keyGenerator.generate(topic);
+        String generatedKey = keyGenerator.generate(topic, false);
 
         assertTrue(defaultPattern.matcher(generatedKey).matches());
-
     }
 
     @Test
     void testKeyGenerator_withoutPrefix() {
-
-        String topic = "test-topic";
+        String topic = "topic";
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
                 .build();
         S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
-        String generatedKey = keyGenerator.generate(topic);
+        String generatedKey = keyGenerator.generate(topic, false);
 
         assertTrue(defaultPattern.matcher(generatedKey).matches());
-
     }
 
-    //todo: test gz
+    @Test
+    void testKeyGenerator_withoutSuffix(){
+        String topic = "topic";
+        S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
+                .build();
+        S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
+
+        String generatedKey = keyGenerator.generate(topic, true);
+
+        assertTrue(defaultPatternWithSuffix.matcher(generatedKey).matches());
+    }
+
 
 
 }

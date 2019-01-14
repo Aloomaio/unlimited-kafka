@@ -52,8 +52,4 @@ public class S3ManagerParams implements StorageManagerParams {
     public void setDateTimeFormatter(DateTimeFormatter dateTimeFormatter) {
         this.dateTimeFormatter = dateTimeFormatter;
     }
-
-    public DateTimeFormatter getDateTimeFormatter() {
-        return dateTimeFormatter;
-    }
 }
