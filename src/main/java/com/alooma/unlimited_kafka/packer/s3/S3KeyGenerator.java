@@ -1,6 +1,9 @@
 package com.alooma.unlimited_kafka.packer.s3;
 
+import java.io.File;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
@@ -12,26 +15,26 @@ public class S3KeyGenerator {
     public S3KeyGenerator(S3ManagerParams s3ManagerParams) {
         this.s3ManagerParams = s3ManagerParams;
     }
-    //todo: check if date should be now or in time zone according to region
+
     public String generate(String topic, boolean shouldUploadAsGz){
         StringBuilder stringBuilder = new StringBuilder();
         DateTimeFormatter dateTimeFormatter = s3ManagerParams.getOptionalDateTimeFormatter().orElse(defaultDateFormatter);
 
-        s3ManagerParams.getOptionalDirectoryNamePrefix().ifPresent(prefix -> stringBuilder.append(prefix).append("/"));
+        s3ManagerParams.getOptionalDirectoryNamePrefix().ifPresent(prefix -> stringBuilder.append(prefix).append(File.separator));
         addDate(stringBuilder, dateTimeFormatter);
-        stringBuilder.append(topic).append("/").append(UUID.randomUUID().toString());
+        stringBuilder.append(topic).append(File.separator).append(UUID.randomUUID().toString());
         addSuffix(shouldUploadAsGz, stringBuilder);
 
         return stringBuilder.toString();
     }
 
     private void addDate(StringBuilder stringBuilder, DateTimeFormatter dateTimeFormatter) {
-        LocalDateTime localDateTime = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
         try {
-            String format = localDateTime.format(dateTimeFormatter);
-            stringBuilder.append(format.replaceAll("[^0-9a-zA-Z]", "/")).append("/");
+            String format = now.format(dateTimeFormatter);
+            stringBuilder.append(format.replaceAll("[^0-9a-zA-Z]", File.separator)).append(File.separator);
         } catch (Exception e){
-            stringBuilder.append(localDateTime.format(defaultDateFormatter)).append("/");
+            stringBuilder.append(now.format(defaultDateFormatter)).append(File.separator);
         }
     }
 
