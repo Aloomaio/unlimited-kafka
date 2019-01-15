@@ -1,7 +1,6 @@
 package com.alooma.unlimited_kafka.packer.s3;
 
 import java.io.File;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
