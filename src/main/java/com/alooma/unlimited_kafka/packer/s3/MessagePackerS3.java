@@ -14,6 +14,9 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.Upload;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.GZIPOutputStream;
 
 public class MessagePackerS3<T> implements MessagePacker<T> {
 
@@ -54,10 +57,10 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
         this.s3ManagerParams = s3ManagerParams;
     }
 
-    public Capsule<T> packMessage(T message, String topic, Long offset){
+    public Capsule<T> packMessage(T message, String topic, Long offset) {
 
         byte[] serializedBytes = serializer.serialize(message);
-        String key = String.format("%s/%d", topic, offset);
+        String key = createKey(topic, offset, s3ManagerParams.isShouldUploadAsGzip());
         if (serializedBytes.length > byteSizeThreshold) {
             try {
                 Upload upload = upload(serializedBytes, key);
@@ -65,7 +68,7 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
                 if (upload.isDone()) {
                     System.out.println("Object upload complete");
                 }
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             } finally {
                 transferManager.shutdownNow(false);
@@ -75,11 +78,28 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
         return Capsule.localCapsule(message);
     }
 
-    private Upload upload(byte[] serializedBytes, String key) {
+    private String createKey(String topic, Long offset, boolean shouldUploadAsGz) {
+        String key = String.format("%s/%d", topic, offset);
+        if (shouldUploadAsGz){
+            return key.concat(".gz");
+        }
+        return key;
+    }
+
+    private Upload upload(byte[] serializedBytes, String key) throws IOException {
         transferManager = new TransferManagerAdvancedFactory().create(s3Client, s3ManagerParams);
+        byte[] inputBytes = s3ManagerParams.isShouldUploadAsGzip() ? getGzipBytes(serializedBytes) : serializedBytes;
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(serializedBytes.length);
-        return transferManager.upload(bucket, key, new ByteArrayInputStream(serializedBytes), metadata);
+        metadata.setContentLength(inputBytes.length);
+        return transferManager.upload(bucket, key, new ByteArrayInputStream(inputBytes), metadata);
+    }
+
+    private byte[] getGzipBytes(byte[] serializedBytes) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream);
+        gzipOutputStream.write(serializedBytes);
+        gzipOutputStream.close();
+        return byteArrayOutputStream.toByteArray();
     }
 }
 

@@ -28,7 +28,6 @@ class MessagePackerS3Test {
         assertEquals(capsule.getData(), "message");
     }
 
-
     @Test
     void testConstructor() {
         MessagePackerS3<String> packerS3 = new MessagePackerS3<>(Regions.EU_WEST_1, "bucket", 100000L, String::getBytes);
