@@ -89,7 +89,7 @@ public class S3IntegrationTest {
     }
 
     @Test
-    void testS3SingleUpload(){
+    void testS3SingleUpload() {
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 6000000L, String::getBytes, new S3ManagerParams());
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
 
