@@ -1,4 +1,4 @@
-package com.alooma.unlimited_kafka.packer.s3;
+package com.alooma.unlimitedKafka.packer.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.transfer.TransferManager;

@@ -1,4 +1,4 @@
-package com.alooma.unlimited_kafka;
+package com.alooma.unlimitedKafka;
 
 
 import java.util.Objects;

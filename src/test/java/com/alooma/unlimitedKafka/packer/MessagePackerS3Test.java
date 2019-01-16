@@ -1,8 +1,8 @@
-package com.alooma.unlimited_kafka.packer;
+package com.alooma.unlimitedKafka.packer;
 
-import com.alooma.unlimited_kafka.Capsule;
-import com.alooma.unlimited_kafka.packer.s3.MessagePackerS3;
-import com.alooma.unlimited_kafka.packer.s3.S3ManagerParams;
+import com.alooma.unlimitedKafka.Capsule;
+import com.alooma.unlimitedKafka.packer.s3.MessagePackerS3;
+import com.alooma.unlimitedKafka.packer.s3.S3ManagerParams;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import org.junit.jupiter.api.Test;

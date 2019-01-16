@@ -1,8 +1,8 @@
-package com.alooma.unlimited_kafka.packer.s3;
+package com.alooma.unlimitedKafka.packer.s3;
 
-import com.alooma.unlimited_kafka.Capsule;
-import com.alooma.unlimited_kafka.Serializer;
-import com.alooma.unlimited_kafka.packer.MessagePacker;
+import com.alooma.unlimitedKafka.Capsule;
+import com.alooma.unlimitedKafka.Serializer;
+import com.alooma.unlimitedKafka.packer.MessagePacker;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;

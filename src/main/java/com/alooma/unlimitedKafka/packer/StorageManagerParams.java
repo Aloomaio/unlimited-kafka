@@ -1,4 +1,4 @@
-package com.alooma.unlimited_kafka.packer;
+package com.alooma.unlimitedKafka.packer;
 
 public interface StorageManagerParams {
 }

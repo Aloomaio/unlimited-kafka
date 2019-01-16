@@ -1,9 +1,9 @@
-package com.alooma.unlimited_kafka.packer;
+package com.alooma.unlimitedKafka.packer;
 
-import com.alooma.unlimited_kafka.Capsule;
-import com.alooma.unlimited_kafka.packer.s3.MessagePackerS3;
-import com.alooma.unlimited_kafka.packer.s3.S3ManagerParams;
-import com.alooma.unlimited_kafka.packer.s3.S3ManagerParamsBuilder;
+import com.alooma.unlimitedKafka.Capsule;
+import com.alooma.unlimitedKafka.packer.s3.MessagePackerS3;
+import com.alooma.unlimitedKafka.packer.s3.S3ManagerParams;
+import com.alooma.unlimitedKafka.packer.s3.S3ManagerParamsBuilder;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;

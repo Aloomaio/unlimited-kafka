@@ -1,6 +1,6 @@
-package com.alooma.unlimited_kafka.packer.s3;
+package com.alooma.unlimitedKafka.packer.s3;
 
-import com.alooma.unlimited_kafka.packer.StorageManagerParams;
+import com.alooma.unlimitedKafka.packer.StorageManagerParams;
 
 import java.util.Optional;
 

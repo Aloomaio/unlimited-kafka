@@ -1,7 +1,7 @@
-package com.alooma.unlimited_kafka.unpacker;
+package com.alooma.unlimitedKafka.unpacker;
 
-import com.alooma.unlimited_kafka.Capsule;
-import com.alooma.unlimited_kafka.SerializeableFactory;
+import com.alooma.unlimitedKafka.Capsule;
+import com.alooma.unlimitedKafka.SerializeableFactory;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;

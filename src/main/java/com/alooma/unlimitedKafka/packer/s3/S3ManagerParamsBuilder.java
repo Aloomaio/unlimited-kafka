@@ -1,4 +1,4 @@
-package com.alooma.unlimited_kafka.packer.s3;
+package com.alooma.unlimitedKafka.packer.s3;
 
 public class S3ManagerParamsBuilder {
 

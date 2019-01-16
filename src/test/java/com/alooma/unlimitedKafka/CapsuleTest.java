@@ -1,4 +1,4 @@
-package com.alooma.unlimited_kafka;
+package com.alooma.unlimitedKafka;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

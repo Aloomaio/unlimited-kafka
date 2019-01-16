@@ -1,6 +1,6 @@
-package com.alooma.unlimited_kafka.packer;
+package com.alooma.unlimitedKafka.packer;
 
-import com.alooma.unlimited_kafka.Capsule;
+import com.alooma.unlimitedKafka.Capsule;
 
 public interface MessagePacker<T> {
     Capsule<T> packMessage(T message, String topic, Long offset);
