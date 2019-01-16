@@ -2,6 +2,7 @@ package com.alooma.unlimited_kafka.packer.s3;
 
 import com.alooma.unlimited_kafka.Capsule;
 import com.alooma.unlimited_kafka.Serializer;
+import com.alooma.unlimited_kafka.exceptions.PackException;
 import com.alooma.unlimited_kafka.packer.MessagePacker;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -73,7 +74,7 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
                     logger.info("Object upload complete");
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new PackException(e);
             } finally {
                 transferManager.shutdownNow(false);
             }
