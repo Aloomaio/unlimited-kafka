@@ -1,7 +1,9 @@
 package com.alooma.unlimited_kafka.unpacker;
 
+import java.io.IOException;
 import com.alooma.unlimited_kafka.Capsule;
 import com.alooma.unlimited_kafka.SerializeableFactory;
+import com.alooma.unlimited_kafka.exceptions.UnpackException;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
@@ -11,16 +13,12 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.io.IOException;
 
 public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
 
     private AmazonS3 s3;
     private String bucket;
     private SerializeableFactory<T> factory;
-
 
     public MessageUnpackerS3(Regions region, String bucket,
                              SerializeableFactory<T> factory,
@@ -52,7 +50,7 @@ public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
         } else if (capsule.getType() == Capsule.Type.LOCAL) {
             return capsule.getData();
         } else {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -63,7 +61,7 @@ public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
         try {
             objectAsBytes = IOUtils.toByteArray(objectContent);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UnpackException(e);
         }
         return factory.fromBytes(objectAsBytes);
     }

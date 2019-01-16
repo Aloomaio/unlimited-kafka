@@ -17,6 +17,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MessagePackerS3<T> implements MessagePacker<T> {
 
@@ -26,6 +28,8 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
     private long byteSizeThreshold;
     private S3ManagerParams s3ManagerParams;
     private TransferManager transferManager;
+
+    private static final Logger logger = LogManager.getLogger("MessagePackerS3");
 
     public MessagePackerS3(Regions region,
                            String bucket,
@@ -66,7 +70,7 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
                 Upload upload = upload(serializedBytes, key);
                 upload.waitForCompletion();
                 if (upload.isDone()) {
-                    System.out.println("Object upload complete");
+                    logger.info("Object upload complete");
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
