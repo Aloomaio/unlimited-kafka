@@ -41,8 +41,11 @@ public class S3IntegrationTest {
 
     @Test
     void testS3MultipartUpload() {
-        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L,true);
+        S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
+                .addShouldUploadAsGzip(true)
+                .build();
+        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, s3ManagerParams);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
         assertEquals("test1/12.gz", capsule.getKey());
@@ -50,8 +53,11 @@ public class S3IntegrationTest {
 
     @Test
     void testS3UploadFileAsGz() {
-        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, true);
+        S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
+                .addShouldUploadAsGzip(true)
+                .build();
+        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, s3ManagerParams);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
         assertEquals("test1/12.gz", capsule.getKey());
@@ -60,7 +66,7 @@ public class S3IntegrationTest {
     @Test
     void testS3UploadFileNotAsGz() {
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, false);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
         assertEquals("test1/12", capsule.getKey());
@@ -72,10 +78,11 @@ public class S3IntegrationTest {
                 .addMultipartUploadThreshold(6000000L)
                 .addMinimumUploadPartSize(10000L)
                 .addThreadPoolSize(1)
+                .addShouldUploadAsGzip(true)
                 .build();
 
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, s3ManagerParams);
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, true);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
         assertEquals("test1/12.gz", capsule.getKey());
@@ -84,7 +91,7 @@ public class S3IntegrationTest {
     @Test
     void testS3SingleUpload(){
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 6000000L, String::getBytes, new S3ManagerParams());
-        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, true);
+        Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
 
         assertEquals(capsule.getType(), Capsule.Type.LOCAL);
         assertEquals("testMultipartUpload", capsule.getData());
