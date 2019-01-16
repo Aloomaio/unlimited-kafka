@@ -64,4 +64,3 @@ public class Capsule<T> {
         return Objects.hash(type, key, data);
     }
 }
-
