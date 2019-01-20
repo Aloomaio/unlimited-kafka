@@ -31,7 +31,7 @@ public class S3ManagerParamsBuilder {
         return this;
     }
 
-    public S3ManagerParamsBuilder addShouldUploadAsGzip(Boolean shouldUploadAsGzip){
+    public S3ManagerParamsBuilder withShouldUploadAsGzip(Boolean shouldUploadAsGzip){
         this.s3ManagerParams.setShouldUploadAsGzip(shouldUploadAsGzip);
         return this;
     }

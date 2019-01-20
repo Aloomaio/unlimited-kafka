@@ -60,7 +60,7 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
     public Capsule<T> packMessage(T message, String topic, Long offset) {
 
         byte[] serializedBytes = serializer.serialize(message);
-        String key = new S3KeyGenerator(s3ManagerParams).generate(topic, s3ManagerParams.isShouldUploadAsGzip());
+        String key = new S3KeyGenerator(s3ManagerParams).generate(topic);
         if (serializedBytes.length > byteSizeThreshold) {
             try {
                 Upload upload = upload(serializedBytes, key);

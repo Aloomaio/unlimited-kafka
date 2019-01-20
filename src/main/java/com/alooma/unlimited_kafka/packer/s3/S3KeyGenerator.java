@@ -15,30 +15,29 @@ public class S3KeyGenerator {
         this.s3ManagerParams = s3ManagerParams;
     }
 
-    public String generate(String topic, boolean shouldUploadAsGz){
+    public String generate(String topic) {
         StringBuilder stringBuilder = new StringBuilder();
-        DateTimeFormatter dateTimeFormatter = s3ManagerParams.getOptionalDateTimeFormatter().orElse(defaultDateFormatter);
-
         s3ManagerParams.getOptionalDirectoryNamePrefix().ifPresent(prefix -> stringBuilder.append(prefix).append(File.separator));
+        DateTimeFormatter dateTimeFormatter = s3ManagerParams.getOptionalDateTimeFormatter().orElse(defaultDateFormatter);
         addDate(stringBuilder, dateTimeFormatter);
         stringBuilder.append(topic).append(File.separator).append(UUID.randomUUID().toString());
-        addSuffix(shouldUploadAsGz, stringBuilder);
+        addSuffix(stringBuilder);
 
         return stringBuilder.toString();
     }
 
     private void addDate(StringBuilder stringBuilder, DateTimeFormatter dateTimeFormatter) {
-        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+        ZonedDateTime utcTime = ZonedDateTime.now(ZoneOffset.UTC);
         try {
-            String format = now.format(dateTimeFormatter);
+            String format = utcTime.format(dateTimeFormatter);
             stringBuilder.append(format.replaceAll("[^0-9a-zA-Z]", File.separator)).append(File.separator);
         } catch (Exception e){
-            stringBuilder.append(now.format(defaultDateFormatter)).append(File.separator);
+            stringBuilder.append(utcTime.format(defaultDateFormatter)).append(File.separator);
         }
     }
 
-    private void addSuffix(boolean shouldUploadAsGz, StringBuilder stringBuilder) {
-        if (shouldUploadAsGz){
+    private void addSuffix(StringBuilder stringBuilder) {
+        if (s3ManagerParams.isShouldUploadAsGzip()) {
             stringBuilder.append(".gz");
         }
     }

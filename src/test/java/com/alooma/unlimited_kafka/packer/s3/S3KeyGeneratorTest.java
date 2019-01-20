@@ -18,11 +18,11 @@ class S3KeyGeneratorTest {
         String topic = "test-topic";
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
                 .withDirectoryNamePrefix("noa")
-                .withDirectoryNameDateTimeFormatter(DateTimeFormatter.ofPattern("yy'/'MMM'/'D'/'HH"))
+                .withDirectoryNameDateTimeFormatter(DateTimeFormatter.ofPattern("yy'-'MMM'/'D'/'HH"))
                 .build();
         S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
-        String generatedKey = keyGenerator.generate(topic, false);
+        String generatedKey = keyGenerator.generate(topic);
 
         assertTrue(pattern.matcher(generatedKey).matches());
     }
@@ -35,7 +35,7 @@ class S3KeyGeneratorTest {
                 .build();
         S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
-        String generatedKey = keyGenerator.generate(topic, false);
+        String generatedKey = keyGenerator.generate(topic);
 
         assertTrue(defaultPattern.matcher(generatedKey).matches());
     }
@@ -47,7 +47,7 @@ class S3KeyGeneratorTest {
                 .build();
         S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
-        String generatedKey = keyGenerator.generate(topic, false);
+        String generatedKey = keyGenerator.generate(topic);
 
         assertTrue(defaultPattern.matcher(generatedKey).matches());
     }
@@ -56,10 +56,11 @@ class S3KeyGeneratorTest {
     void testKeyGenerator_withoutSuffix(){
         String topic = "topic";
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
+                .withShouldUploadAsGzip(true)
                 .build();
         S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
-        String generatedKey = keyGenerator.generate(topic, true);
+        String generatedKey = keyGenerator.generate(topic);
 
         assertTrue(defaultPatternWithSuffix.matcher(generatedKey).matches());
     }

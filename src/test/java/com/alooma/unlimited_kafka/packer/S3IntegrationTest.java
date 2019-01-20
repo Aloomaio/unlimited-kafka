@@ -10,7 +10,6 @@ import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import io.findify.s3mock.S3Mock;
-import org.joda.time.format.DateTimeFormat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -45,11 +44,10 @@ public class S3IntegrationTest {
         client.createBucket(bucket);
     }
 
-
     @Test
     void testS3MultipartUpload() {
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
-                .addShouldUploadAsGzip(true)
+                .withShouldUploadAsGzip(true)
                 .build();
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, s3ManagerParams);
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
@@ -61,7 +59,7 @@ public class S3IntegrationTest {
     @Test
     void testS3UploadFileAsGz() {
         S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
-                .addShouldUploadAsGzip(true)
+                .withShouldUploadAsGzip(true)
                 .build();
         MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, s3ManagerParams);
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L);
@@ -86,7 +84,7 @@ public class S3IntegrationTest {
                 .withMinimumUploadPartSize(10000L)
                 .withThreadPoolSize(1)
                 .withDirectoryNamePrefix("usa")
-                .addShouldUploadAsGzip(true)
+                .withShouldUploadAsGzip(true)
                 .withDirectoryNameDateTimeFormatter(DateTimeFormatter.ofPattern("yyyy'/'MM'/'dd'/'HH"))
                 .build();
 
