@@ -65,7 +65,7 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
     public Capsule<T> packMessage(T message, String topic, Long offset) {
 
         byte[] serializedBytes = serializer.serialize(message);
-        String key = createKey(topic, offset, s3ManagerParams.isShouldUploadAsGzip());
+        String key = new S3KeyGenerator(s3ManagerParams).generate(topic);
         if (serializedBytes.length > byteSizeThreshold) {
             try {
                 Upload upload = upload(serializedBytes, key);
@@ -74,6 +74,7 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
                     logger.info("Object upload complete");
                 }
             } catch (Exception e) {
+                logger.error("Unable to upload file to S3");
                 throw new PackException(e);
             } finally {
                 transferManager.shutdownNow(false);
@@ -81,14 +82,6 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
             return Capsule.remoteCapsule(key);
         }
         return Capsule.localCapsule(message);
-    }
-
-    private String createKey(String topic, Long offset, boolean shouldUploadAsGz) {
-        String key = String.format("%s/%d", topic, offset);
-        if (shouldUploadAsGz){
-            return key.concat(".gz");
-        }
-        return key;
     }
 
     private Upload upload(byte[] serializedBytes, String key) throws IOException {
