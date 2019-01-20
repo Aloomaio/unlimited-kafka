@@ -74,6 +74,7 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
                     logger.info("Object upload complete");
                 }
             } catch (Exception e) {
+                logger.error("Unable to upload file to S3");
                 throw new PackException(e);
             } finally {
                 transferManager.shutdownNow(false);

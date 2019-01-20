@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class S3KeyGeneratorTest {
 
@@ -65,6 +68,19 @@ class S3KeyGeneratorTest {
         assertTrue(defaultPatternWithSuffix.matcher(generatedKey).matches());
     }
 
+    @Test
+    void testKeyGenerator_useDefaultWhenDateFormatFails() {
+        String topic = "test-topic";
+        DateTimeFormatter dateTimeFormatter = mock(DateTimeFormatter.class);
+        S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
+                .withDirectoryNamePrefix("noa")
+                .withDirectoryNameDateTimeFormatter(dateTimeFormatter)
+                .build();
+        when(dateTimeFormatter.format(any())).thenThrow(RuntimeException.class);
+        S3KeyGenerator keyGenerator = new S3KeyGenerator(s3ManagerParams);
 
+        String generatedKey = keyGenerator.generate(topic);
 
+        assertTrue(defaultPattern.matcher(generatedKey).matches());
+    }
 }

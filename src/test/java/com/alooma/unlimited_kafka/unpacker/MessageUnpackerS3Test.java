@@ -63,7 +63,6 @@ class MessageUnpackerS3Test {
         assertThrows(UnsupportedOperationException.class, () -> unpacker.unpackMessage(capsuleMock));
     }
 
-
     @Test
     void unpackException() {
         AmazonS3 s3 = mock(AmazonS3.class, RETURNS_DEEP_STUBS);
@@ -84,6 +83,5 @@ class MessageUnpackerS3Test {
         MessageUnpackerS3<String> unpackerS3 = new MessageUnpackerS3<>(Regions.EU_WEST_1, "bucket", String::new);
 
         assertEquals("fakedata", unpackerS3.unpackMessage(Capsule.localCapsule("fakedata")));
-
     }
 }

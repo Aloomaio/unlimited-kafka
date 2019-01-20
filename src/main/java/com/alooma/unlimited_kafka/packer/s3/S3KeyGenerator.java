@@ -1,5 +1,8 @@
 package com.alooma.unlimited_kafka.packer.s3;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -10,6 +13,8 @@ public class S3KeyGenerator {
 
     private final S3ManagerParams s3ManagerParams;
     private final DateTimeFormatter defaultDateFormatter = DateTimeFormatter.ofPattern("yyyy'/'MM'/'dd'/'HH");
+
+    private static final Logger logger = LogManager.getLogger("MessagePackerS3");
 
     public S3KeyGenerator(S3ManagerParams s3ManagerParams) {
         this.s3ManagerParams = s3ManagerParams;
@@ -26,12 +31,13 @@ public class S3KeyGenerator {
         return stringBuilder.toString();
     }
 
-    private void addDate(StringBuilder stringBuilder, DateTimeFormatter dateTimeFormatter) {
+    protected void addDate(StringBuilder stringBuilder, DateTimeFormatter dateTimeFormatter) {
         ZonedDateTime utcTime = ZonedDateTime.now(ZoneOffset.UTC);
         try {
             String format = utcTime.format(dateTimeFormatter);
             stringBuilder.append(format.replaceAll("[^0-9a-zA-Z]", File.separator)).append(File.separator);
-        } catch (Exception e){
+        } catch (Exception e) {
+            logger.debug("Key generator Failed to format date, using default format.");
             stringBuilder.append(utcTime.format(defaultDateFormatter)).append(File.separator);
         }
     }
