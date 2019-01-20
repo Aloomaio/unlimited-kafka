@@ -48,7 +48,10 @@ public class S3IntegrationTest {
 
     @Test
     void testS3MultipartUpload() {
-        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
+        S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
+                .addShouldUploadAsGzip(true)
+                .build();
+        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, s3ManagerParams);
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L,true);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
@@ -57,7 +60,10 @@ public class S3IntegrationTest {
 
     @Test
     void testS3UploadFileAsGz() {
-        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, new S3ManagerParams());
+        S3ManagerParams s3ManagerParams = new S3ManagerParamsBuilder()
+                .addShouldUploadAsGzip(true)
+                .build();
+        MessagePackerS3<String> packerS3 = new MessagePackerS3<String>(client, bucket, 1, String::getBytes, s3ManagerParams);
         Capsule<String> capsule = packerS3.packMessage("testMultipartUpload", "test1", 12L, true);
 
         assertEquals(capsule.getType(), Capsule.Type.REMOTE);
@@ -80,6 +86,7 @@ public class S3IntegrationTest {
                 .withMinimumUploadPartSize(10000L)
                 .withThreadPoolSize(1)
                 .withDirectoryNamePrefix("usa")
+                .addShouldUploadAsGzip(true)
                 .withDirectoryNameDateTimeFormatter(DateTimeFormatter.ofPattern("yyyy'/'MM'/'dd'/'HH"))
                 .build();
 

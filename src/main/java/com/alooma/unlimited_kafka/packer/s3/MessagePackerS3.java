@@ -57,13 +57,13 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
         this.s3ManagerParams = s3ManagerParams;
     }
 
-    public Capsule<T> packMessage(T message, String topic, Long offset, boolean shouldUploadAsGz) {
+    public Capsule<T> packMessage(T message, String topic, Long offset) {
 
         byte[] serializedBytes = serializer.serialize(message);
-        String key = new S3KeyGenerator(s3ManagerParams).generate(topic, shouldUploadAsGz);
+        String key = new S3KeyGenerator(s3ManagerParams).generate(topic, s3ManagerParams.isShouldUploadAsGzip());
         if (serializedBytes.length > byteSizeThreshold) {
             try {
-                Upload upload = upload(serializedBytes, key, shouldUploadAsGz);
+                Upload upload = upload(serializedBytes, key);
                 upload.waitForCompletion();
                 if (upload.isDone()) {
                     System.out.println("Object upload complete");
@@ -78,15 +78,15 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
         return Capsule.localCapsule(message);
     }
 
-    private Upload upload(byte[] serializedBytes, String key, boolean shouldUploadAsGz) throws IOException {
+    private Upload upload(byte[] serializedBytes, String key) throws IOException {
         transferManager = new TransferManagerAdvancedFactory().create(s3Client, s3ManagerParams);
-        byte[] inputBytes = shouldUploadAsGz ? getGzBytes(serializedBytes) : serializedBytes;
+        byte[] inputBytes = s3ManagerParams.isShouldUploadAsGzip() ? getGzipBytes(serializedBytes) : serializedBytes;
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(inputBytes.length);
         return transferManager.upload(bucket, key, new ByteArrayInputStream(inputBytes), metadata);
     }
 
-    private byte[] getGzBytes(byte[] serializedBytes) throws IOException {
+    private byte[] getGzipBytes(byte[] serializedBytes) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         GZIPOutputStream gzipOutputStream = new GZIPOutputStream(byteArrayOutputStream);
         gzipOutputStream.write(serializedBytes);

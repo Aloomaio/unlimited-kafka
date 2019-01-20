@@ -12,6 +12,7 @@ public class S3ManagerParams implements StorageManagerParams {
     private Integer threadPoolSize;
     private String directoryNamePrefix;
     private DateTimeFormatter dateTimeFormatter;
+    private boolean shouldUploadAsGzip = false;
 
     public void setMultipartUploadThreshold(long multipartUploadThreshold) {
         this.multipartUploadThreshold = multipartUploadThreshold;
@@ -23,6 +24,14 @@ public class S3ManagerParams implements StorageManagerParams {
 
     public void setThreadPoolSize(int threadPoolSize) {
         this.threadPoolSize = threadPoolSize;
+    }
+
+    public void setShouldUploadAsGzip(boolean shouldUploadAsGzip) {
+        this.shouldUploadAsGzip = shouldUploadAsGzip;
+    }
+
+    public boolean isShouldUploadAsGzip() {
+        return shouldUploadAsGzip;
     }
 
     public Optional<Integer> getOptionalOfThreadPoolSize(){
