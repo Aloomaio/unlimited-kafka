@@ -60,9 +60,9 @@ public class MessageUnpackerS3<T> implements MessageUnpacker<T> {
         byte[] objectAsBytes;
         try {
             objectAsBytes = IOUtils.toByteArray(objectContent);
-        } catch (IOException e) {
+            return factory.fromBytes(objectAsBytes);
+        } catch (Exception e) {
             throw new UnpackException(e);
         }
-        return factory.fromBytes(objectAsBytes);
     }
 }
