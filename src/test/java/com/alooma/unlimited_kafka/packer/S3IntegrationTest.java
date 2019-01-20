@@ -33,6 +33,7 @@ public class S3IntegrationTest {
         api = new S3Mock.Builder().withPort(8001).withInMemoryBackend().build();
         api.start();
 
+
         EndpointConfiguration endpoint = new EndpointConfiguration("http://localhost:8001", "us-west-2");
         client = AmazonS3ClientBuilder
                 .standard()

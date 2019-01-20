@@ -5,4 +5,3 @@ public interface Serializer<T> {
 
     byte[] serialize(T data);
 }
-
