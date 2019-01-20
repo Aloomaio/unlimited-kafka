@@ -2,6 +2,7 @@ package com.alooma.unlimited_kafka.packer.s3;
 
 import com.alooma.unlimited_kafka.Capsule;
 import com.alooma.unlimited_kafka.Serializer;
+import com.alooma.unlimited_kafka.exceptions.PackException;
 import com.alooma.unlimited_kafka.packer.MessagePacker;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -17,6 +18,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MessagePackerS3<T> implements MessagePacker<T> {
 
@@ -26,6 +29,8 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
     private long byteSizeThreshold;
     private S3ManagerParams s3ManagerParams;
     private TransferManager transferManager;
+
+    private static final Logger logger = LogManager.getLogger("MessagePackerS3");
 
     public MessagePackerS3(Regions region,
                            String bucket,
@@ -66,10 +71,10 @@ public class MessagePackerS3<T> implements MessagePacker<T> {
                 Upload upload = upload(serializedBytes, key);
                 upload.waitForCompletion();
                 if (upload.isDone()) {
-                    System.out.println("Object upload complete");
+                    logger.info("Object upload complete");
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new PackException(e);
             } finally {
                 transferManager.shutdownNow(false);
             }

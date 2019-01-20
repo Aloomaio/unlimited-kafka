@@ -1,6 +1,7 @@
 package com.alooma.unlimited_kafka.packer;
 
 import com.alooma.unlimited_kafka.Capsule;
+import com.alooma.unlimited_kafka.exceptions.PackException;
 import com.alooma.unlimited_kafka.packer.s3.MessagePackerS3;
 import com.alooma.unlimited_kafka.packer.s3.S3ManagerParams;
 import com.amazonaws.regions.Regions;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 
@@ -26,6 +28,16 @@ class MessagePackerS3Test {
         assertEquals(capsule.getType(), Capsule.Type.LOCAL);
         assertNull(capsule.getKey());
         assertEquals(capsule.getData(), "message");
+    }
+
+    @Test
+    void testPackRemote() {
+        AmazonS3 s3 = mock(AmazonS3.class);
+        S3ManagerParams s3ManagerParams = mock(S3ManagerParams.class);
+
+        MessagePackerS3<String> packer = new MessagePackerS3<>(s3, "maor-test-retention", 1, String::getBytes, s3ManagerParams);
+
+        assertThrows(PackException.class, () -> packer.packMessage("message", "topic", 123L));
     }
 
     @Test
